@@ -1,0 +1,18 @@
+{
+  "description": "Synthetic / redacted Indonesian bank & e-wallet notification samples. Drop your own .txt files in this folder and add a case here; tests/test_parsers.py picks them up automatically.",
+  "received_at": "2026-09-24T18:00:00",
+  "cases": [
+    {"file": "bca_qris.txt",       "source": "bca",          "account": "BCA",       "amount": "50000",    "direction": "debit",  "merchant": "TOKOPEDIA",       "channel": "qris"},
+    {"file": "bca_transfer_db.txt","source": "bca",          "account": "BCA",       "amount": "250000.00","direction": "debit",  "merchant": "BUDI SANTOSO",    "channel": "transfer"},
+    {"file": "bca_transfer_cr.txt","source": "bca",          "account": "BCA",       "amount": "1500000.00","direction": "credit","merchant": null,              "channel": "transfer"},
+    {"file": "mandiri_debit.txt",  "source": "mandiri",      "account": "Mandiri",   "amount": "50000.00", "direction": "debit",  "merchant": "TOKOPEDIA",       "channel": "unknown"},
+    {"file": "bni_card.txt",       "source": "bank_generic", "account": "BNI",       "amount": "25000.00", "direction": "debit",  "merchant": "INDOMARET",       "channel": "card"},
+    {"file": "bri_qris.txt",       "source": "bank_generic", "account": "BRI",       "amount": "30000.00", "direction": "debit",  "merchant": "KOPI KENANGAN",   "channel": "qris"},
+    {"file": "gopay.txt",          "source": "ewallet",      "account": "GoPay",     "amount": "25000.00", "direction": "debit",  "merchant": "KOPI KENANGAN",   "channel": "ewallet"},
+    {"file": "ovo.txt",            "source": "ewallet",      "account": "OVO",       "amount": "50000.00", "direction": "debit",  "merchant": "GRAB",            "channel": "ewallet"},
+    {"file": "dana.txt",           "source": "ewallet",      "account": "DANA",      "amount": "30000.00", "direction": "debit",  "merchant": "WARUNG PAK TOMO", "channel": "ewallet"},
+    {"file": "shopeepay.txt",      "source": "ewallet",      "account": "ShopeePay", "amount": "15000.00", "direction": "debit",  "merchant": "WARTEG",          "channel": "ewallet"},
+    {"file": "bca_dotted_date.txt", "source": "bca",         "account": "BCA",      "amount": "50000",    "direction": "debit",  "merchant": "TOKOPEDIA",       "channel": "qris"},
+    {"file": "bni_dotted_datetime.txt", "source": "bank_generic", "account": "BNI", "amount": "25000",    "direction": "debit",  "merchant": "INDOMARET",       "channel": "card"}
+  ]
+}

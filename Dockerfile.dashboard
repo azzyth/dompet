@@ -1,0 +1,22 @@
+# Dashboard image: only the dashboard deps (streamlit/plotly/pandas/psycopg) — no
+# scikit-learn, since the Streamlit app reads precomputed views and never trains.
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+COPY requirements-dashboard.txt .
+RUN pip install --no-cache-dir -r requirements-dashboard.txt
+
+COPY dompet ./dompet
+COPY tests ./tests
+# Theme + server config (Streamlit reads ./.streamlit/config.toml from the workdir).
+COPY .streamlit ./.streamlit
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "dompet/dashboard/app.py", \
+     "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]

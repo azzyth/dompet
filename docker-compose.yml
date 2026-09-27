@@ -1,0 +1,76 @@
+name: dompet
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dompet
+      POSTGRES_PASSWORD: dompet
+      POSTGRES_DB: dompet
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # schema -> seed -> views, run once on first boot, in filename order.
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./db/views.sql:/docker-entrypoint-initdb.d/03_views.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dompet -d dompet"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql://dompet:dompet@postgres:5432/dompet
+      INGEST_TOKEN: ${INGEST_TOKEN:-change-me}
+      DASHBOARD_URL: ${DASHBOARD_URL:-http://localhost:8501}
+      DB_UI_URL: ${DB_UI_URL:-http://localhost:8080}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Keep the trained categorizer on the host so a rebuild does not wipe it.
+      - ./models:/app/models
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health').status==200 else sys.exit(1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    environment:
+      DATABASE_URL: postgresql://dompet:dompet@postgres:5432/dompet
+    ports:
+      - "8501:8501"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0) if urllib.request.urlopen('http://localhost:8501/_stcore/health').status==200 else sys.exit(1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # A web UI for the database. Postgres's own port (5432) speaks the Postgres wire
+  # protocol, not HTTP, so browsing it in a browser returns ERR_EMPTY_RESPONSE —
+  # this is the "open the data" port instead.
+  adminer:
+    image: adminer:4
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -1,0 +1,5 @@
+model,accuracy,macro_f1,note
+rules,0.9545,0.9515,keyword rules from dompet/ml/labels.py
+logreg,0.9,0.9008,word 1-2 gram TF-IDF + LogisticRegression
+linearsvc,0.9727,0.9721,word+char TF-IDF + calibrated LinearSVC
+lightgbm,0.9727,0.9733,word TF-IDF + LightGBM

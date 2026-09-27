@@ -1,0 +1,25 @@
+# Training configuration for the transaction categorizer.
+# Baseline-first, exactly like the competition workflow: rules, then a linear
+# model, then an SVC with char n-grams, optionally LightGBM. The winner is chosen
+# on a frozen stratified split, not by trying things until one looks best.
+
+seed: 42
+test_size: 0.25
+
+# synthetic | db | csv
+source: synthetic
+
+synthetic:
+  n_per_category: 40
+  seed: 42
+
+csv_path: null          # required when source: csv (columns: text,category)
+
+models:
+  - rules
+  - logreg
+  - linearsvc
+  - lightgbm            # skipped automatically if lightgbm is not installed
+
+reports_dir: reports
+model_path: models/category_model.joblib

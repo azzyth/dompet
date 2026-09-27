@@ -1,0 +1,14 @@
+[theme]
+# Keeps the dashboard from looking like bare Streamlit defaults, and matches the
+# plotly_dark template used for the charts.
+base = "dark"
+primaryColor = "#22c55e"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#161b22"
+textColor = "#e6edf3"
+
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false

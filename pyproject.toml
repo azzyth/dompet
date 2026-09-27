@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dompet"
+version = "0.1.0"
+description = "Personal finance tracker that reads your own Indonesian bank & e-wallet notifications, auto-categorizes them, and forecasts your end-of-month balance."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alrazzy Taufik Hussein", email = "azzyth@users.noreply.github.com" }]
+
+# Runtime deps for the service layer. The parsing/analytics core (`dompet.core`,
+# `dompet.analytics`) is pure stdlib and importable without any of these.
+dependencies = [
+    "psycopg[binary]>=3.1",
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "scikit-learn>=1.4",
+    "pandas>=2.2",
+    "joblib>=1.3",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# LightGBM usually beats the linear baseline; kept optional so the core install stays light.
+boost = ["lightgbm>=4.3"]
+# Fine-tune IndoBERT for the frontier categorizer.
+nlp = ["torch>=2.2", "transformers>=4.40"]
+dashboard = ["streamlit>=1.34", "plotly>=5.20", "pandas>=2.2", "psycopg[binary]>=3.1"]
+dev = ["pytest>=8.0", "ruff>=0.5"]
+
+[project.scripts]
+dompet-poll = "dompet.adapters.imap:poll_once"
+
+# --------------------------------------------------------------------------- #
+# Lint configuration — pinned here so local runs match CI exactly.
+# --------------------------------------------------------------------------- #
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "B008",  # FastAPI's Depends(...) in argument defaults is the documented idiom
+    "E501",  # long regexes and docstrings; line-length above is advisory
+]
